@@ -29,6 +29,7 @@ export class ProductComponent implements OnInit {
 
   ngOnInit(): void {
     this.getAll();
+    console.log('hola');
   }
 
   openModal(template: TemplateRef<any>, product: any) {
