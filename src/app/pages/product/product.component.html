@@ -16,116 +16,67 @@
             <th>
                 P.V.P
             </th>
+
+            <th>
+                Acciones
+            </th>
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td>
-                1
+        <tr *ngFor="let product of products">
+            <td class="colum__size2">
+                {{product.ProductID}}
+            </td>
+            <td class="colum__size">
+                <img class="img__container" src="https://sistema.laterneraec.com/{{product.Imagen}}" alt="">
+
             </td>
             <td>
-                imagen
+                {{product.Descripcion}}
             </td>
             <td>
-                coca cola
+                {{product.Category.Categoria}}
             </td>
-            <td>
-                bebidas
-            </td>
-            <td>
-                12
+            <td class="colum__size">
+                {{product.PrecioVenta | currency}}
             </td>
 
+            <td style="width:200px;"><button (click)="openModal(template,product)" class="btn btn-warning mr-2"><i
+                        class="fas fa-pencil"></i></button> <button class="btn btn-danger"><i
+                        class="fas fa-trash"></i></button></td>
         </tr>
-        <tr>
-            <td>
-                1
-            </td>
-            <td>
-                imagen
-            </td>
-            <td>
-                coca cola
-            </td>
-            <td>
-                bebidas
-            </td>
-            <td>
-                12
-            </td>
 
-        </tr>
-        <tr>
-            <td>
-                1
-            </td>
-            <td>
-                imagen
-            </td>
-            <td>
-                coca cola
-            </td>
-            <td>
-                bebidas
-            </td>
-            <td>
-                12
-            </td>
-
-        </tr>
-        <tr>
-            <td>
-                1
-            </td>
-            <td>
-                imagen
-            </td>
-            <td>
-                coca cola
-            </td>
-            <td>
-                bebidas
-            </td>
-            <td>
-                12
-            </td>
-
-        </tr>
-        <tr>
-            <td>
-                1
-            </td>
-            <td>
-                imagen
-            </td>
-            <td>
-                coca cola
-            </td>
-            <td>
-                bebidas
-            </td>
-            <td>
-                12
-            </td>
-
-        </tr>
-        <tr>
-            <td>
-                1
-            </td>
-            <td>
-                imagen
-            </td>
-            <td>
-                coca cola
-            </td>
-            <td>
-                bebidas
-            </td>
-            <td>
-                12
-            </td>
-
-        </tr>
     </tbody>
 </table>
+
+<app-pagination *ngIf="totalItems !==0" [data]="totalItems" [limit]="7" (selectedPageEmitter)="escucharEvento($event)">
+</app-pagination>
+<!-- <app-pagination [data]="100" [pages]="10" [limit]="10"></app-pagination> -->
+
+
+
+
+
+
+<ng-template #template>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Editar Producto</h4>
+        <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="productForm" (ngSubmit)="save()" novalidate>
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Descripcion</label>
+                <input formControlName="descripcion" type="text" class="form-control">
+                <!-- <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div> -->
+            </div>
+            <div class="mb-3">
+                <label for="exampleInputPassword1" class="form-label">P.V.P</label>
+                <input formControlName="pvp" type="number" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </form>
+    </div>
+</ng-template>

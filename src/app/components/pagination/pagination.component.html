@@ -1,0 +1,10 @@
+<div class="pagination">
+    <ul *ngIf="data !== 0">
+        <li *ngIf="selectedPage !== 1" (click)="prev()" class="btn prev"><span><i class="fas fa-angle-left"></i>
+                {{prevText}}</span></li>
+        <li (click)="pageChange(page)" *ngFor="let page of pagination ; let i = index" class="numb"
+            [ngClass]="{'active': selectedPage === page}"><span>{{page}}</span></li>
+        <li *ngIf="paginationNumberTotal !== selectedPage" (click)="next()" class="btn next"><span>{{nextText}} <i
+                    class="fas fa-angle-right"></i></span></li>
+    </ul>
+</div>

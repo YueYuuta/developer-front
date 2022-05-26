@@ -7,7 +7,7 @@ const url: string = environment.url_back;
 })
 export class ProductService {
   constructor(private readonly _httpClient: HttpClient) {}
-  getAll() {
-    return this._httpClient.get(`${url}/product`);
+  getAll(desde: number, hasta: number) {
+    return this._httpClient.get(`${url}/product/${desde}/${hasta}`);
   }
 }
