@@ -69,14 +69,27 @@
         <form [formGroup]="productForm" (ngSubmit)="save()" novalidate>
             <div class="mb-3">
                 <label for="exampleInputEmail1" class="form-label">Descripcion</label>
-                <input formControlName="descripcion" type="text" class="form-control">
+                <input formControlName="Descripcion" type="text" class="form-control">
                 <!-- <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div> -->
             </div>
             <div class="mb-3">
                 <label for="exampleInputPassword1" class="form-label">P.V.P</label>
-                <input formControlName="pvp" type="number" class="form-control">
+                <input formControlName="PrecioVenta" type="number" class="form-control">
             </div>
-            <button type="submit" class="btn btn-primary">Guardar</button>
+
+            <div class="mb-3">
+                <label class="form-label">Categoria</label>
+
+                <select formControlName="Category" class="form-control" aria-label="Default select example">
+                    <option>Seleccione la categoria</option>
+                    <option *ngFor="let category of categories" [value]="category.CategoryID">{{category.Categoria}}
+                    </option>
+                </select>
+                <!-- <select name="" id="">
+                    <option *ngFor="let category of categories" value="">{{category.Categoria}}</option>
+                </select> -->
+            </div>
+            <button [disabled]="productForm.invalid" type="submit" class="btn btn-primary">Guardar</button>
         </form>
     </div>
 </ng-template>

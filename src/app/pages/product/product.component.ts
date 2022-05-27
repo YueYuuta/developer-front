@@ -1,6 +1,10 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { ReadCategoryModel } from 'src/app/models/category/read-category';
+import { CreateProductModel } from 'src/app/models/product/create-product';
+import { ReadProductModel } from 'src/app/models/product/read-product';
+import { CategoryService } from 'src/app/services/category.service';
 import { ProductService } from 'src/app/services/product.service';
 
 @Component({
@@ -11,30 +15,40 @@ import { ProductService } from 'src/app/services/product.service';
 export class ProductComponent implements OnInit {
   productForm!: FormGroup;
   modalRef?: BsModalRef;
-  products: any = [];
+  products: ReadProductModel[] = [];
   desde: number = 0;
   hasta: number = 5;
   totalItems: number = 0;
+  categories: ReadCategoryModel[] = [];
 
   constructor(
     private readonly _productService: ProductService,
     private modalService: BsModalService,
-    private readonly fb: FormBuilder
+    private readonly fb: FormBuilder,
+    private readonly _categoryService: CategoryService
   ) {
     this.productForm = this.fb.group({
-      descripcion: [null],
-      pvp: [null],
+      Descripcion: [null, [Validators.required, Validators.minLength(4)]],
+      PrecioVenta: [null, [Validators.required]],
+      Category: [null, [Validators.required]],
     });
   }
 
   ngOnInit(): void {
     this.getAll();
-    console.log('hola');
+    this.getCategories();
+  }
+  getCategories() {
+    this._categoryService.getAll().subscribe((categories) => {
+      console.log(categories, 'estas son las categorias de producto');
+      this.categories = categories;
+    });
   }
 
   openModal(template: TemplateRef<any>, product: any) {
-    this.productForm.get('descripcion')?.setValue(product.Descripcion);
-    this.productForm.get('pvp')?.setValue(product.PrecioVenta);
+    this.productForm.get('Descripcion')?.setValue(product.Descripcion);
+    this.productForm.get('PrecioVenta')?.setValue(product.PrecioVenta);
+    this.productForm.get('Category')?.setValue(product.Category.CategoryID);
     this.modalRef = this.modalService.show(template);
   }
   getAll(): void {
@@ -69,5 +83,11 @@ export class ProductComponent implements OnInit {
     this.hasta = hasta;
     this.getAll();
   }
-  save() {}
+  save() {
+    if (this.productForm.valid) {
+      const productSave: CreateProductModel = this.productForm.value;
+      productSave.Category = Number(productSave.Category);
+      console.log('producto editado', productSave);
+    }
+  }
 }
