@@ -8,17 +8,21 @@ import { PaginationComponent } from './components/pagination/pagination.componen
 import { ProductComponent } from './pages/product/product.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ModalModule } from 'ngx-bootstrap/modal';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { PaginationModule } from 'ngx-bootstrap/pagination';
+import { ModalDinamicComponent } from './pages/product/components/modal-dinamic/modal-dinamic.component';
 
 @NgModule({
-  declarations: [AppComponent, ProductComponent, PaginationComponent],
+  declarations: [AppComponent, ProductComponent, PaginationComponent, ModalDinamicComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    ModalModule.forRoot(),
     ReactiveFormsModule,
+    ModalModule.forRoot(),
+    PaginationModule.forRoot(),
+    FormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

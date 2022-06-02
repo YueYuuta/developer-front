@@ -26,6 +26,7 @@ table{
       }
 }
 
+
 .img__container{
     width: 2rem;
     height: 2rem;
@@ -36,7 +37,12 @@ table{
 .colum__size2{
     width: 1.5rem;
 }
-
+// .my-pagination::ng-deep .page-item.active .page-link {
+//     z-index: 1;
+//     color: #df1515 !important;
+//     background-color:rgb(87, 190, 83) !important;
+//     border-color: #161818 !important;
+// }
 
 .btn{
   
@@ -70,3 +76,5 @@ table{
 .mr-2{
     margin-right: 2px;
 }
+
+

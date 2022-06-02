@@ -1,3 +1,5 @@
+<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="openModal('Crear')">Crear
+    Producto</button>
 <table>
     <thead>
         <tr>
@@ -41,7 +43,7 @@
                 {{product.PrecioVenta | currency}}
             </td>
 
-            <td style="width:200px;"><button (click)="openModal(template,product)" class="btn btn-warning mr-2"><i
+            <td style="width:200px;"><button (click)="openModal('Editar',product)" class="btn btn-warning mr-2"><i
                         class="fas fa-pencil"></i></button> <button class="btn btn-danger"><i
                         class="fas fa-trash"></i></button></td>
         </tr>
@@ -49,47 +51,24 @@
     </tbody>
 </table>
 
-<app-pagination *ngIf="totalItems !==0" [data]="totalItems" [limit]="7" (selectedPageEmitter)="escucharEvento($event)">
-</app-pagination>
-<!-- <app-pagination [data]="100" [pages]="10" [limit]="10"></app-pagination> -->
+<div class="col-12">
+    <pagination [boundaryLinks]="true" [totalItems]="totalItems" [itemsPerPage]="hasta" [rotate]="true" [maxSize]="5"
+        [(ngModel)]="currentPage" (pageChanged)="pageChanged($event)" class="justify-content-center"
+        [customFirstTemplate]="firstTemplate" [customLastTemplate]="lastTemplate" [customNextTemplate]="nextTemplate"
+        [customPreviousTemplate]="prevTemplate">
+    </pagination>
+</div>
 
+<ng-template #nextTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class='simple-icon-arrow-right'></i>
+</ng-template>
+<ng-template #prevTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class='simple-icon-arrow-left'></i>
+</ng-template>
+<ng-template #lastTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class='simple-icon-control-end'></i>
+</ng-template>
 
-
-
-
-
-<ng-template #template>
-    <div class="modal-header">
-        <h4 class="modal-title pull-left">Editar Producto</h4>
-        <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
-            <span aria-hidden="true" class="visually-hidden">&times;</span>
-        </button>
-    </div>
-    <div class="modal-body">
-        <form [formGroup]="productForm" (ngSubmit)="save()" novalidate>
-            <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Descripcion</label>
-                <input formControlName="Descripcion" type="text" class="form-control">
-                <!-- <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div> -->
-            </div>
-            <div class="mb-3">
-                <label for="exampleInputPassword1" class="form-label">P.V.P</label>
-                <input formControlName="PrecioVenta" type="number" class="form-control">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Categoria</label>
-
-                <select formControlName="Category" class="form-control" aria-label="Default select example">
-                    <option>Seleccione la categoria</option>
-                    <option *ngFor="let category of categories" [value]="category.CategoryID">{{category.Categoria}}
-                    </option>
-                </select>
-                <!-- <select name="" id="">
-                    <option *ngFor="let category of categories" value="">{{category.Categoria}}</option>
-                </select> -->
-            </div>
-            <button [disabled]="productForm.invalid" type="submit" class="btn btn-primary">Guardar</button>
-        </form>
-    </div>
+<ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
+    <i class='simple-icon-control-start'></i>
 </ng-template>

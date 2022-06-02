@@ -1,55 +1,55 @@
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  TemplateRef,
+  ViewEncapsulation,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { forkJoin } from 'rxjs';
 import { ReadCategoryModel } from 'src/app/models/category/read-category';
 import { CreateProductModel } from 'src/app/models/product/create-product';
 import { ReadProductModel } from 'src/app/models/product/read-product';
 import { CategoryService } from 'src/app/services/category.service';
 import { ProductService } from 'src/app/services/product.service';
+import { ModalDinamicComponent } from './components/modal-dinamic/modal-dinamic.component';
 
 @Component({
   selector: 'app-product',
   templateUrl: './product.component.html',
   styleUrls: ['./product.component.scss'],
+  // encapsulation: ViewEncapsulation.None,
 })
 export class ProductComponent implements OnInit {
-  productForm!: FormGroup;
-  modalRef?: BsModalRef;
+  categories: ReadCategoryModel[] = [];
+  limite = 15;
   products: ReadProductModel[] = [];
   desde: number = 0;
   hasta: number = 5;
-  totalItems: number = 0;
-  categories: ReadCategoryModel[] = [];
+  totalItems: number = 1000;
+
+  currentPage = 1;
 
   constructor(
     private readonly _productService: ProductService,
-    private modalService: BsModalService,
-    private readonly fb: FormBuilder,
+    private readonly modalService: BsModalService,
     private readonly _categoryService: CategoryService
-  ) {
-    this.productForm = this.fb.group({
-      Descripcion: [null, [Validators.required, Validators.minLength(4)]],
-      PrecioVenta: [null, [Validators.required]],
-      Category: [null, [Validators.required]],
-    });
-  }
+  ) {}
 
   ngOnInit(): void {
+    // this.initAllProductAndCategory();
+    // this.getCategories();
     this.getAll();
-    this.getCategories();
-  }
-  getCategories() {
-    this._categoryService.getAll().subscribe((categories) => {
-      console.log(categories, 'estas son las categorias de producto');
-      this.categories = categories;
-    });
   }
 
-  openModal(template: TemplateRef<any>, product: any) {
-    this.productForm.get('Descripcion')?.setValue(product.Descripcion);
-    this.productForm.get('PrecioVenta')?.setValue(product.PrecioVenta);
-    this.productForm.get('Category')?.setValue(product.Category.CategoryID);
-    this.modalRef = this.modalService.show(template);
+  openModal(title: string, readProductModel?: ReadProductModel): void {
+    const create_edit = this.modalService.show(ModalDinamicComponent, {
+      initialState: { title, readProductModel },
+      backdrop: 'static',
+    });
+    create_edit.onHidden?.subscribe((data) =>
+      console.log('esta es la data', data)
+    );
   }
   getAll(): void {
     this._productService
@@ -67,7 +67,8 @@ export class ProductComponent implements OnInit {
   }
 
   pageChanged(page: any): void {
-    const item = page - 1;
+    console.log(page, 'este es el page');
+    const item = page.page - 1;
     this.desde = this.hasta * item;
     console.log(item, 'este es el item');
     console.log(this.desde, 'este es el nuevo desde');
@@ -83,11 +84,25 @@ export class ProductComponent implements OnInit {
     this.hasta = hasta;
     this.getAll();
   }
-  save() {
-    if (this.productForm.valid) {
-      const productSave: CreateProductModel = this.productForm.value;
-      productSave.Category = Number(productSave.Category);
-      console.log('producto editado', productSave);
-    }
+
+  /*
+  OPCION 2 DEPENDE DE LA COMPLEJIDAD DEL NEGOCIO Y CARGA DE DATOS, MEJORA DE PREFORMACE 
+  */
+
+  getCategories() {
+    setTimeout(() => {
+      this._categoryService.getAll().subscribe((categories) => {
+        this.categories = categories;
+      });
+    }, 6000);
+  }
+
+  initAllProductAndCategory() {
+    forkJoin([
+      this._categoryService.getAll(),
+      this._productService.getAll(this.desde, this.hasta),
+    ]).subscribe((data) =>
+      console.log('esta es la informacion de las dos observables', data)
+    );
   }
 }

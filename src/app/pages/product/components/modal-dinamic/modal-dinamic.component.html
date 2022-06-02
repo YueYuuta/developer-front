@@ -1,0 +1,82 @@
+<div class="modal-header">
+    <h4 class="modal-title pull-left">{{title}} Producto</h4>
+    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+        <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <form [formGroup]="productForm" (ngSubmit)="save()" novalidate>
+
+        <div class="mb-3">
+            <label class="form-label">Categoria</label>
+
+            <select formControlName="Category" class="form-control" aria-label="Default select example">
+                <option value="">Seleccione la categoria</option>
+                <option *ngFor="let category of categories" [value]="category.CategoryID">{{category.Categoria}}
+                </option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Descripcion</label>
+            <input formControlName="Descripcion" type="text" class="form-control">
+            <!-- <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div> -->
+        </div>
+
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Codigo</label>
+            <input formControlName="Codigo" type="text" class="form-control">
+
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <div class="mb-3">
+                    <label for="exampleInputPassword1" class="form-label">Precio De Compra</label>
+                    <input formControlName="PrecioCompra" (change)="calculateGananciaPrecioSinIva()" type="number"
+                        class="form-control">
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="mb-3">
+                    <label for="exampleInputPassword1" class="form-label">Precio Venta Sin Iva</label>
+                    <input formControlName="PrecioSinIva" type="number" class="form-control">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-6">
+                <div class="mb-3">
+                    <label for="exampleInputPassword1" class="form-label">Porcentaje De Ganancia</label>
+                    <input formControlName="Ganancia" type="number" class="form-control">
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="mb-3">
+                    <label for="exampleInputPassword1" class="form-label">P.V.P</label>
+                    <input (change)="calculateGananciaPrecioSinIva()" formControlName="PrecioVenta" type="number"
+                        class="form-control">
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="mb-3">
+            <div class="form-check">
+                <input class="form-check-input" (change)="calculateGananciaPrecioSinIva()" formControlName="IvaProducto"
+                    type="checkbox" value="" id="flexCheckDefault">
+                <label class="form-check-label" for="flexCheckDefault">
+                    Iva
+                </label>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                (click)="modalRef?.hide()">Cancelar</button>
+            <button [disabled]="productForm.invalid" type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+
+
+    </form>
+</div>
