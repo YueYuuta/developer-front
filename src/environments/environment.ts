@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  url_back: 'http://localhost:3000',
+  // url_back: 'http://localhost:3000',
+  url_back: 'http://34.232.81.245:3000',
 };
 
 /*

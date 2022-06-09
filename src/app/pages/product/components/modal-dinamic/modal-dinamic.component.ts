@@ -6,6 +6,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { NotificationsService } from 'angular2-notifications';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { ReadCategoryModel } from 'src/app/models/category/read-category';
 import { CreateProductModel } from 'src/app/models/product/create-product';
@@ -34,7 +35,8 @@ export class ModalDinamicComponent implements OnInit {
     private readonly fb: FormBuilder,
     public modalRef: BsModalRef,
     private readonly _categoryService: CategoryService,
-    private readonly _productService: ProductService
+    private readonly _productService: ProductService,
+    private readonly _notificationsService: NotificationsService
   ) {}
 
   ngOnInit(): void {
@@ -47,6 +49,20 @@ export class ModalDinamicComponent implements OnInit {
     } else {
       this.initCreateForm();
     }
+  }
+  saveDinamic() {
+    if (this.readProductModel) {
+      this.update();
+    } else {
+      this.create();
+    }
+  }
+  private iva(iva: string): boolean {
+    let salida = true;
+    if (iva === 'N') {
+      salida = false;
+    }
+    return salida;
   }
 
   private initCreateForm() {
@@ -75,14 +91,33 @@ export class ModalDinamicComponent implements OnInit {
       ],
       Codigo: [this.readProductModel.Codigo, [Validators.required]],
       PrecioCompra: [this.readProductModel.PrecioCompra, [Validators.required]],
-      IvaProducto: [this.readProductModel.IvaProducto],
+      IvaProducto: [this.iva(this.readProductModel.IvaProducto)],
       PrecioSinIva: [
         { value: this.readProductModel.PrecioSinIva, disabled: true },
       ],
-      Ganancia: [{ value: null, disabled: true }],
+      Ganancia: [
+        {
+          value: this.porcentajeGanancia(
+            this.readProductModel.PrecioCompra,
+            this.readProductModel.PrecioVenta
+          ),
+          disabled: true,
+        },
+      ],
     });
   }
-  save() {
+  private ganacia(precioCompra: number, precioVenta: number): number {
+    return Number((precioVenta - precioCompra).toFixed(2));
+  }
+  private porcentajeGanancia(
+    precioCompra: number,
+    precioVenta: number
+  ): number {
+    const ganancia = this.ganacia(precioCompra, precioVenta);
+    const porcentajeGanancia = (ganancia / precioCompra) * 100;
+    return Number(porcentajeGanancia.toFixed(2));
+  }
+  private create() {
     if (this.productForm.valid) {
       let iva = 'N';
       const productSave: CreateProductModel = this.productForm.value;
@@ -104,6 +139,16 @@ export class ModalDinamicComponent implements OnInit {
       console.log('respuesta de crear data', prodctSave);
       this._productService.create(prodctSave).subscribe(
         (data) => {
+          const toast = this._notificationsService.success(
+            'Correcto!',
+            data.message,
+            {
+              timeOut: 5000,
+              showProgressBar: true,
+              pauseOnHover: true,
+              clickToClose: true,
+            }
+          );
           console.log('respuesta de crear data', data);
           this.productForm.reset();
           this.modalService.setDismissReason(data);
@@ -111,8 +156,73 @@ export class ModalDinamicComponent implements OnInit {
         },
         (err) => {
           console.log('respuesta de crear error', err);
+          const toast = this._notificationsService.error(
+            'Error!',
+            err.error.message,
+            {
+              timeOut: 5000,
+              showProgressBar: true,
+              pauseOnHover: true,
+              clickToClose: true,
+            }
+          );
         }
       );
+    }
+  }
+
+  private update() {
+    if (this.productForm.valid) {
+      let iva = 'N';
+      const productSave: CreateProductModel = this.productForm.value;
+      productSave.Category = Number(productSave.Category);
+      const productForm = this.productForm.value;
+
+      if (productForm.IvaProducto) {
+        iva = 'S';
+      }
+      const prodctSave: CreateProductModel = {
+        Category: productForm.Category,
+        Codigo: productForm.Codigo,
+        Descripcion: productForm.Descripcion,
+        IvaProducto: iva,
+        PrecioCompra: productForm.PrecioCompra,
+        PrecioVenta: productForm.PrecioVenta,
+      };
+
+      this._productService
+        .update(this.readProductModel.ProductID, prodctSave)
+        .subscribe(
+          (data) => {
+            const toast = this._notificationsService.success(
+              'Correcto!',
+              data.message,
+              {
+                timeOut: 5000,
+                showProgressBar: true,
+                pauseOnHover: true,
+                clickToClose: true,
+              }
+            );
+            console.log('respuesta de crear data', data);
+            this.productForm.reset();
+            this.modalService.setDismissReason(data);
+            this.modalRef.hide();
+          },
+          (err) => {
+            console.log('respuesta de crear error', err);
+            const toast = this._notificationsService.error(
+              'Error!',
+              err.error.message,
+              {
+                timeOut: 5000,
+                showProgressBar: true,
+                pauseOnHover: true,
+                clickToClose: true,
+              }
+            );
+          }
+        );
     }
   }
 
@@ -122,8 +232,11 @@ export class ModalDinamicComponent implements OnInit {
       precioSinIva = this.oPrecioVenta?.value / 1.12;
     }
     this.oPrecioSinIva?.setValue(precioSinIva.toFixed(2));
-    const ganancia = this.oPrecioVenta?.value - this.oPrecioCompra?.value;
-    const porcentajeGanancia = (ganancia / this.oPrecioCompra?.value) * 100;
+
+    const porcentajeGanancia = this.porcentajeGanancia(
+      this.oPrecioCompra?.value,
+      this.oPrecioVenta?.value
+    );
     this.oGanancia?.setValue(porcentajeGanancia);
   }
   private validateMayor(): boolean {

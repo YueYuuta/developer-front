@@ -70,11 +70,45 @@ table{
       color: rgb(228, 22, 39);
       background-color: #d1a2a2;
     }
+    
 }
+.jc{
+    &-btn{
+        border-radius:5%;
+        border-width: 0;
+        box-shadow: rgba(25,25,25,.04) 0 0 1px 0,rgba(0,0,0,.1) 0 3px 4px 0; 
+        cursor: pointer;
+        display: inline-block;
+        // font-family: Arial,sans-serif;
+        font-size: 1em;
+        height: 50px;
+        // width: 40px;
+        padding: 0 25px;
+        transition: all 200ms;
+        &-create{
+            color: rgb(235, 240, 235);
+            background-color: #496e57;
+          }
+          &-create:hover{
+            color: rgb(235, 240, 235);
+            background-color: #385245;
+          }
+        } 
+    }
+
 
 
 .mr-2{
     margin-right: 2px;
 }
 
+.button__container{
+    display: flex;
+    margin: 1rem 1rem 1rem 1rem;
+}
+.head__table{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 

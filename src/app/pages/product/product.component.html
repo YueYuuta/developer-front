@@ -1,5 +1,12 @@
-<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="openModal('Crear')">Crear
-    Producto</button>
+<div class="head__table">
+    <div class="button__container">
+        <button type="button" class="jc-btn jc-btn-create" data-bs-dismiss="modal" (click)="openModal('Crear')">Crear
+            Producto</button>
+    </div>
+    <div class="search-sm d-inline-block float-md-left mr-1 mb-1 align-top mr-3">
+        <input #input class="form-control" placeholder="Buscar..." (keyup)="onSearchKeyUp(input.value)">
+    </div>
+</div>
 <table>
     <thead>
         <tr>
@@ -13,7 +20,13 @@
                 Descripcion
             </th>
             <th>
+                Codigo
+            </th>
+            <th>
                 Categoria
+            </th>
+            <th>
+                Precio De Compra
             </th>
             <th>
                 P.V.P
@@ -37,15 +50,21 @@
                 {{product.Descripcion}}
             </td>
             <td>
+                {{product.Codigo}}
+            </td>
+            <td>
                 {{product.Category.Categoria}}
+            </td>
+            <td>
+                {{product.PrecioCompra | currency}}
             </td>
             <td class="colum__size">
                 {{product.PrecioVenta | currency}}
             </td>
 
             <td style="width:200px;"><button (click)="openModal('Editar',product)" class="btn btn-warning mr-2"><i
-                        class="fas fa-pencil"></i></button> <button class="btn btn-danger"><i
-                        class="fas fa-trash"></i></button></td>
+                        class="fas fa-pencil"></i></button> <button (click)="delete(product.ProductID)"
+                    class="btn btn-danger"><i class="fas fa-trash"></i></button></td>
         </tr>
 
     </tbody>
@@ -72,3 +91,4 @@
 <ng-template #firstTemplate let-disabled="disabled" let-currentPage="currentPage">
     <i class='simple-icon-control-start'></i>
 </ng-template>
+<simple-notifications></simple-notifications>
